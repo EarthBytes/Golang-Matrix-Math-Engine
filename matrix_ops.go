@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 func Add(A, B [][]float64) [][]float64 {
 	// run check
@@ -72,6 +75,44 @@ func Multiply(A, B [][]float64) [][]float64 {
 			result[i][j] = sum
 		}
 	}
+	return result
+}
+
+// MultiplyParallel does the same as Multiply but uses one goroutine per row of the result
+func MultiplyParallel(A, B [][]float64) [][]float64 {
+	// run check (same as Multiply)
+	if !CanMultiply(A, B) {
+		fmt.Println("Cannot multiply the given matrices.")
+		return [][]float64{} // return empty matrix
+	}
+
+	rowsA := len(A)
+	colsA := len(A[0])
+	colsB := len(B[0])
+
+	result := make([][]float64, rowsA)
+
+	var wg sync.WaitGroup
+	wg.Add(rowsA)
+
+	// each goroutine computes one row of the result
+	for i := 0; i < rowsA; i++ {
+		go func(i int) {
+			defer wg.Done()
+
+			row := make([]float64, colsB)
+			for j := 0; j < colsB; j++ {
+				sum := 0.0
+				for k := 0; k < colsA; k++ {
+					sum += A[i][k] * B[k][j]
+				}
+				row[j] = sum
+			}
+			result[i] = row // each goroutine writes only its own row
+		}(i)
+	}
+
+	wg.Wait()
 	return result
 }
 

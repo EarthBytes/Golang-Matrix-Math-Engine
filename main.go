@@ -7,7 +7,7 @@ import (
 
 func main() {
 	demo := flag.String("demo", "linear", "demo mode: linear (y=xW+b) or op (single operation)") // chooses the mode - defaults to linear
-	op := flag.String("op", "multiply", "when -demo=op: add, subtract, multiply, transpose")     // chooses the specific math operation - defaults to multiply
+	op := flag.String("op", "multiply", "when -demo=op: add, subtract, multiply, multiply-parallel, transpose") // chooses the specific math operation - defaults to multiply
 	flag.Parse()
 
 	switch *demo { // determines which demo to run based on the -demo flag
@@ -74,6 +74,13 @@ func runOpDemo(op string) {
 	case "multiply", "mul":
 		result = Multiply(A, B)
 		fmt.Println("Matrix multplication (A * B) Result:")
+		for _, row := range result {
+			fmt.Println(row)
+		}
+
+	case "multiply-parallel", "mul-par":
+		result = MultiplyParallel(A, B)
+		fmt.Println("Matrix multiplication (A * B) with parallel rows. Result:")
 		for _, row := range result {
 			fmt.Println(row)
 		}
