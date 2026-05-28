@@ -13,6 +13,13 @@ func main() {
 		{7, 8},
 	}
 
+	result := Multiply(A, B)
+
+	fmt.Println(result)
+}
+
+func Multiply(A [][]float64, B [][]float64) [][]float64 {
+
 	result := make([][]float64, 2)
 	for i := range result {
 		result[i] = make([]float64, 2)
@@ -30,5 +37,5 @@ func main() {
 			result[i][j] = sum
 		}
 	}
-	fmt.Println(result)
+	return result
 }
