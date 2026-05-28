@@ -98,3 +98,35 @@ func TestAddBadShapes(t *testing.T) {
 		t.Fatalf("expected ErrCannotAdd, got %v", err)
 	}
 }
+
+// build a rows x cols matrix filled with simple values (for benchmarks only)
+func benchMatrix(rows, cols int) [][]float64 {
+	m := make([][]float64, rows)
+	v := 0.1
+	for i := range m {
+		m[i] = make([]float64, cols)
+		for j := range m[i] {
+			m[i][j] = v
+			v += 0.001
+		}
+	}
+	return m
+}
+
+func BenchmarkMultiply_Serial(b *testing.B) {
+	A := benchMatrix(256, 256)
+	B := benchMatrix(256, 256)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = Multiply(A, B)
+	}
+}
+
+func BenchmarkMultiply_Parallel(b *testing.B) {
+	A := benchMatrix(256, 256)
+	B := benchMatrix(256, 256)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = MultiplyParallel(A, B)
+	}
+}
