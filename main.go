@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	demo := flag.String("demo", "linear", "demo mode: linear (y=xW+b) or op (single operation)") // chooses the mode - defaults to linear
+	demo := flag.String("demo", "linear", "demo mode: linear (y=xW+b) or op (single operation)")                // chooses the mode - defaults to linear
 	op := flag.String("op", "multiply", "when -demo=op: add, subtract, multiply, multiply-parallel, transpose") // chooses the specific math operation - defaults to multiply
 	flag.Parse()
 
@@ -36,7 +36,11 @@ func runLinearDemo() {
 	fmt.Printf("b = %v  (1 × out_features)\n", b)
 	fmt.Println()
 
-	y := LinearForward(x, W, b)
+	y, err := LinearForward(x, W, b)
+	if err != nil { // check for error in linear forward pass and print if exists
+		fmt.Println(err)
+		return
+	}
 	fmt.Printf("y = %v  (1 × out_features)\n", y)
 }
 
@@ -52,11 +56,16 @@ func runOpDemo(op string) {
 	}
 
 	var result [][]float64
+	var err error
 
 	// runOpDemo function executes based on which matrix operation is requested
 	switch op {
 	case "add":
-		result = Add(A, B)
+		result, err = Add(A, B)
+		if err != nil { // check for error in addition and print if exists
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Matrix addition (A + B). Result:")
 
 		// loop through the matrix and print each row on a new line
@@ -65,28 +74,44 @@ func runOpDemo(op string) {
 		}
 
 	case "subtract", "sub":
-		result = Subtract(A, B)
+		result, err = Subtract(A, B)
+		if err != nil { // check for error in subtraction and print if exists
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Matrix subtraction (A - B) Result:")
 		for _, row := range result {
 			fmt.Println(row)
 		}
 
 	case "multiply", "mul":
-		result = Multiply(A, B)
+		result, err = Multiply(A, B)
+		if err != nil { // check for error in multiplication and print if exists
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Matrix multplication (A * B) Result:")
 		for _, row := range result {
 			fmt.Println(row)
 		}
 
 	case "multiply-parallel", "mul-par":
-		result = MultiplyParallel(A, B)
+		result, err = MultiplyParallel(A, B)
+		if err != nil { // check for error in parallel multiplication and print if exists
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Matrix multiplication (A * B) with parallel rows. Result:")
 		for _, row := range result {
 			fmt.Println(row)
 		}
 
 	case "transpose", "trans":
-		result = Transpose(A)
+		result, err = Transpose(A)
+		if err != nil { // check for error in transposition and print if exists
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Matrix transpose (A^T) Result:")
 		for _, row := range result {
 			fmt.Println(row)

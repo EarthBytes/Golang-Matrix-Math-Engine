@@ -1,24 +1,20 @@
 package main
 
-import "fmt"
-
 // LinearForward computes y = xW + b
 // x is the input, W is the weight matrix, and b is the bias
 
-func LinearForward(x, W, b [][]float64) [][]float64 {
+func LinearForward(x, W, b [][]float64) ([][]float64, error) { // return error if  checks fail
 	if !CanMultiply(x, W) {
-		fmt.Println("linear forward: cannot multiply x and W (check dimensions)")
-		return [][]float64{}
+		return nil, ErrLinearCannotMultiply
 	}
 
-	prod := Multiply(x, W)
-	if len(prod) == 0 {
-		return prod
+	prod, err := Multiply(x, W) // compute xW and check for error
+	if err != nil {
+		return nil, err
 	}
 
 	if !CanAddOrSubtract(prod, b) {
-		fmt.Println("linear forward: bias shape does not match xW output shape (check dimensions)")
-		return [][]float64{}
+		return nil, ErrLinearBiasShape
 	}
 
 	return Add(prod, b)

@@ -1,15 +1,11 @@
 package main
 
-import (
-	"fmt"
-	"sync"
-)
+import "sync"
 
-func Add(A, B [][]float64) [][]float64 {
+func Add(A, B [][]float64) ([][]float64, error) {
 	// run check
 	if !CanAddOrSubtract(A, B) {
-		fmt.Println("Cannot add the given matrices.")
-		return [][]float64{} // return empty matrix
+		return nil, ErrCannotAdd // return error for addition if check fails
 	}
 
 	rows := len(A)
@@ -24,14 +20,13 @@ func Add(A, B [][]float64) [][]float64 {
 			result[i][j] = A[i][j] + B[i][j]
 		}
 	}
-	return result
+	return result, nil // return the result and nil error if successful
 }
 
-func Subtract(A, B [][]float64) [][]float64 {
+func Subtract(A, B [][]float64) ([][]float64, error) { // return error for subtraction if check fails
 	// run check
 	if !CanAddOrSubtract(A, B) {
-		fmt.Println("Cannot subtract the given matrices.")
-		return [][]float64{} // return empty matrix
+		return nil, ErrCannotSubtract
 	}
 
 	rows := len(A)
@@ -46,14 +41,13 @@ func Subtract(A, B [][]float64) [][]float64 {
 			result[i][j] = A[i][j] - B[i][j]
 		}
 	}
-	return result
+	return result, nil
 }
 
-func Multiply(A, B [][]float64) [][]float64 {
+func Multiply(A, B [][]float64) ([][]float64, error) {
 	// run check
 	if !CanMultiply(A, B) {
-		fmt.Println("Cannot multiply the given matrices.")
-		return [][]float64{} // return empty matrix
+		return nil, ErrCannotMultiply
 	}
 
 	// multiplication using dynamic dimensions
@@ -75,15 +69,14 @@ func Multiply(A, B [][]float64) [][]float64 {
 			result[i][j] = sum
 		}
 	}
-	return result
+	return result, nil
 }
 
 // MultiplyParallel does the same as Multiply but uses one goroutine per row of the result
-func MultiplyParallel(A, B [][]float64) [][]float64 {
+func MultiplyParallel(A, B [][]float64) ([][]float64, error) {
 	// run check (same as Multiply)
 	if !CanMultiply(A, B) {
-		fmt.Println("Cannot multiply the given matrices.")
-		return [][]float64{} // return empty matrix
+		return nil, ErrCannotMultiply
 	}
 
 	rowsA := len(A)
@@ -113,14 +106,13 @@ func MultiplyParallel(A, B [][]float64) [][]float64 {
 	}
 
 	wg.Wait()
-	return result
+	return result, nil
 }
 
-func Transpose(A [][]float64) [][]float64 {
+func Transpose(A [][]float64) ([][]float64, error) {
 	// run valid matrix check
 	if !IsValidMatrix(A) {
-		fmt.Println("Cannot transpose the given matrices.")
-		return [][]float64{} // return empty matrix
+		return nil, ErrCannotTranspose
 	}
 
 	rows := len(A)
@@ -136,5 +128,5 @@ func Transpose(A [][]float64) [][]float64 {
 			result[j][i] = A[i][j]
 		}
 	}
-	return result
+	return result, nil
 }
