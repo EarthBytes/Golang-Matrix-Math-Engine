@@ -57,18 +57,38 @@ func runOpDemo(op string) {
 	switch op {
 	case "add":
 		result = Add(A, B)
+		fmt.Println("Matrix addition (A + B). Result:")
+
+		// loop through the matrix and print each row on a new line
+		for _, row := range result {
+			fmt.Println(row)
+		}
+
 	case "subtract", "sub":
 		result = Subtract(A, B)
+		fmt.Println("Matrix subtraction (A - B) Result:")
+		for _, row := range result {
+			fmt.Println(row)
+		}
+
 	case "multiply", "mul":
 		result = Multiply(A, B)
+		fmt.Println("Matrix multplication (A * B) Result:")
+		for _, row := range result {
+			fmt.Println(row)
+		}
+
 	case "transpose", "trans":
 		result = Transpose(A)
+		fmt.Println("Matrix transpose (A^T) Result:")
+		for _, row := range result {
+			fmt.Println(row)
+		}
+
 	default:
-		fmt.Printf("unknown operation %q (use add, subtract, multiply, or transpose)\n", op)
+		fmt.Printf("unknown operation %q\n", op)
 		return
 	}
-
-	printMatrix(result)
 }
 
 func printMatrix(m [][]float64) {
